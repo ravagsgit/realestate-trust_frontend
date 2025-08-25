@@ -215,9 +215,6 @@ export const ApartmentDetailsPage: React.FC = () => {
           {/* Lock Status */}
           {isLocked && (
             <Card>
-          {/* Lock Status */}
-          {isLocked && (
-            <Card>
               <div className="flex items-center mb-3">
                 <Lock className="w-5 h-5 mr-2 text-orange-500" />
                 <span className="font-medium text-orange-700">Квартира заблокирована</span>

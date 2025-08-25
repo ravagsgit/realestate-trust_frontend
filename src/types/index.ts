@@ -96,11 +96,23 @@ export interface LoginCredentials {
   password: string;
 }
 
+
+
 export interface RegisterData {
-  email: string;
-  phone: string;
+  email?: string;
+  phone?: string;
   password: string;
   role?: 'BUYER' | 'DEVELOPER';
   firstName?: string;
   lastName?: string;
 }
+
+/*export interface ProfileData {
+  email?: string;
+  phone?: string;
+  password: string;
+  role?: 'BUYER' | 'DEVELOPER';
+  firstName?: string;
+  lastName?: string;
+
+}*/

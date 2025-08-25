@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { Plus, Search, Filter, MapPin, Calendar } from 'lucide-react';
+import { Building2, Plus, Search, Filter, MapPin, Calendar } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useComplexes, useCreateComplex } from '../hooks/useApi';
 import { Card } from '../components/ui/Card';

@@ -8,14 +8,8 @@ import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { Badge } from '../components/ui/Badge';
+//import { ProfileData } from '../types';
 
-const profileSchema = yup.object({
-  firstName: yup.string().required('Имя обязательно'),
-  lastName: yup.string().required('Фамилия обязательна'),
-  phone2: yup.string().optional(),
-  address: yup.string().optional(),
-  birthDate: yup.date().optional(),
-});
 
 interface ProfileFormData {
   firstName: string;
@@ -25,6 +19,20 @@ interface ProfileFormData {
   birthDate?: string;
 }
 
+const profileSchema = yup.object({
+  firstName: yup.string().required('Имя обязательно'),
+  lastName: yup.string().required('Фамилия обязательна'),
+  phone2: yup.string().optional(),
+  address: yup.string().optional(),
+  birthDate: yup
+    .string()
+    .optional()
+    .test('valid-date', 'Неверный формат даты', (value) => {
+      if (!value) return true;
+      return /^\d{4}-\d{2}-\d{2}$/.test(value);
+    }),
+});
+
 export const ProfilePage: React.FC = () => {
   const { user, updateUserProfile } = useAuth();
 
@@ -33,21 +41,31 @@ export const ProfilePage: React.FC = () => {
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<ProfileFormData>({
-    resolver: yupResolver(profileSchema),
+    // Явное приведение типа resolver
+    resolver: yupResolver(profileSchema) as any,
     defaultValues: {
       firstName: user?.profile?.firstName || '',
       lastName: user?.profile?.lastName || '',
       phone2: user?.profile?.phone2 || '',
       address: user?.profile?.address || '',
-      birthDate: user?.profile?.birthDate ? user.profile.birthDate.split('T')[0] : '',
+      birthDate: user?.profile?.birthDate 
+        ? user.profile.birthDate.split('T')[0] 
+        : '',
     },
   });
 
   const onSubmit = async (data: ProfileFormData) => {
     try {
-      await updateUserProfile(data);
+      const filteredData = Object.entries(data).reduce((acc, [key, value]) => {
+        if (value !== '' && value !== undefined && value !== null) {
+          acc[key as keyof ProfileFormData] = value;
+        }
+        return acc;
+      }, {} as Partial<ProfileFormData>);
+
+      await updateUserProfile(filteredData);
     } catch (error) {
-      // Ошибки обрабатываются в AuthContext
+      console.error('Ошибка обновления профиля:', error);
     }
   };
 

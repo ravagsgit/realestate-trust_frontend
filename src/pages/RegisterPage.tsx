@@ -9,16 +9,27 @@ import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { RegisterData } from '../types';
 
-const registerSchema = yup.object({
-  firstName: yup.string().required('Имя обязательно'),
-  lastName: yup.string().required('Фамилия обязательна'),
+interface RegisterFormData {
+  email: string;
+  firstName: string;
+  lastName: string;
+  phone: string;
+  password: string;
+  confirmPassword: string;
+  role: 'BUYER' | 'DEVELOPER';
+  agreement: boolean;
+}
+
+const registerSchema: yup.ObjectSchema<RegisterFormData> = yup.object({
   email: yup
     .string()
     .email('Неверный формат email')
     .required('Email обязателен'),
+  firstName: yup.string().required('Имя обязательно'),
+  lastName: yup.string().required('Фамилия обязательна'),
   phone: yup
     .string()
-    .matches(
+    .matches( 
       /^(\+7|8)?[\s\-]?\(?[489][0-9]{2}\)?[\s\-]?[0-9]{3}[\s\-]?[0-9]{2}[\s\-]?[0-9]{2}$/,
       'Неверный формат номера телефона'
     )
@@ -33,12 +44,7 @@ const registerSchema = yup.object({
     .required('Подтверждение пароля обязательно'),
   role: yup.string().oneOf(['BUYER', 'DEVELOPER']).required('Выберите роль'),
   agreement: yup.boolean().oneOf([true], 'Необходимо согласие с условиями'),
-});
-
-interface RegisterFormData extends RegisterData {
-  confirmPassword: string;
-  agreement: boolean;
-}
+}) as yup.ObjectSchema<RegisterFormData>;
 
 export const RegisterPage: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -61,7 +67,18 @@ export const RegisterPage: React.FC = () => {
 
   const onSubmit = async (data: RegisterFormData) => {
     try {
-      const { confirmPassword, agreement, ...registerData } = data;
+      const { confirmPassword, agreement, ...formData } = data;
+      
+      // Создаем объект RegisterData с правильной типизацией
+      const registerData: RegisterData = {
+        email: formData.email,
+        phone: formData.phone,
+        password: formData.password,
+        role: formData.role,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+      };
+      
       await registerUser(registerData);
     } catch (error) {
       // Ошибки обрабатываются в AuthContext

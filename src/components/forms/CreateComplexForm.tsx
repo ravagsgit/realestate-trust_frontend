@@ -5,6 +5,16 @@ import * as yup from 'yup';
 import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
 
+interface CreateComplexFormData {
+  name: string;
+  address: string;
+  description?: string;
+  constructionStatus: string;
+  completionDate?: string;
+  latitude?: number;
+  longitude?: number;
+}
+
 const complexSchema = yup.object({
   name: yup
     .string()
@@ -24,15 +34,7 @@ const complexSchema = yup.object({
   longitude: yup.number().optional(),
 });
 
-interface CreateComplexFormData {
-  name: string;
-  address: string;
-  description?: string;
-  constructionStatus: string;
-  completionDate?: string;
-  latitude?: number;
-  longitude?: number;
-}
+
 
 interface CreateComplexFormProps {
   onSubmit: (data: CreateComplexFormData) => Promise<void>;
@@ -50,7 +52,7 @@ export const CreateComplexForm: React.FC<CreateComplexFormProps> = ({
     handleSubmit,
     formState: { errors },
   } = useForm<CreateComplexFormData>({
-    resolver: yupResolver(complexSchema),
+    resolver: yupResolver(complexSchema) as any,
     defaultValues: {
       constructionStatus: 'PLANNING',
     },

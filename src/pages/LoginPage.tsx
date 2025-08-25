@@ -9,6 +9,11 @@ import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { LoginCredentials } from '../types';
 
+interface LoginFormData {
+  email: string;
+  password: string;
+}
+
 const loginSchema = yup.object({
   email: yup
     .string()
@@ -28,7 +33,7 @@ export const LoginPage: React.FC = () => {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<LoginCredentials>({
+  } = useForm<LoginFormData>({
     resolver: yupResolver(loginSchema),
   });
 
