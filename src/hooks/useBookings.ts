@@ -3,23 +3,6 @@ import { ApiService } from '../services/api';
 import { toast } from 'react-hot-toast';
 import type { Booking, CreateBookingData } from '../types/booking';
 
-// Расширяем ApiService
-declare module '../services/api' {
-  namespace ApiService {
-    function getBookings(params?: any): Promise<{ bookings: Booking[]; pagination: any }>;
-    function getBookingById(id: string): Promise<Booking>;
-    function createBooking(data: CreateBookingData): Promise<Booking>;
-    function updateBookingStatus(id: string, status: string): Promise<Booking>;
-    function cancelBooking(id: string, reason?: string): Promise<Booking>;
-    function extendBooking(id: string, hours: number): Promise<Booking>;
-    function getBookingStats(): Promise<any>;
-    function getNotifications(params?: any): Promise<{ notifications: Notification[]; pagination: any }>;
-    function markNotificationAsRead(id: string): Promise<Notification>;
-    function markAllNotificationsAsRead(): Promise<{ count: number }>;
-    function getUnreadNotificationsCount(): Promise<{ unreadCount: number }>;
-  }
-}
-
 // Хуки для бронирований
 export const useBookings = (params?: any) => {
   return useQuery({

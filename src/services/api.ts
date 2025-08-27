@@ -86,6 +86,7 @@ api.interceptors.response.use(
 
 // API методы
 export class ApiService {
+  
   // Аутентификация
   static async login(credentials: LoginCredentials): Promise<AuthResponse> {
     const response = await api.post<ApiResponse<AuthResponse>>('/auth/login', credentials);
@@ -203,7 +204,7 @@ export class ApiService {
     await api.delete(`/apartments/${id}`);
   }
 
-   static async lockApartment(id: string, reason?: string): Promise<Apartment> {
+  static async lockApartment(id: string, reason?: string): Promise<Apartment> {
     const response = await api.post<ApiResponse<Apartment>>(`/apartments/${id}/lock`, {
       reason
     });
@@ -214,4 +215,89 @@ export class ApiService {
     const response = await api.post<ApiResponse<Apartment>>(`/apartments/${id}/unlock`);
     return response.data.data!;
   }
-};
+
+  // ====== НОВЫЕ МЕТОДЫ ======
+
+  // Бронирования
+  static async getBookings(params?: { 
+    page?: number; 
+    limit?: number; 
+    status?: string; 
+    complexId?: string; 
+    dateFrom?: string; 
+    dateTo?: string; 
+  }): Promise<{ bookings: any[]; pagination: any }> {
+    const response = await api.get<ApiResponse<any[]>>('/bookings', {
+      params,
+    });
+    return {
+      bookings: response.data.data!,
+      pagination: response.data.pagination!,
+    };
+  }
+
+  static async getBookingById(id: string): Promise<any> {
+    const response = await api.get<ApiResponse<any>>(`/bookings/${id}`);
+    return response.data.data!;
+  }
+
+  static async createBooking(data: any): Promise<any> {
+    const response = await api.post<ApiResponse<any>>('/bookings', data);
+    return response.data.data!;
+  }
+
+  static async updateBookingStatus(id: string, status: string): Promise<any> {
+    const response = await api.patch<ApiResponse<any>>(`/bookings/${id}/status`, { 
+      status 
+    });
+    return response.data.data!;
+  }
+
+  static async cancelBooking(id: string, reason?: string): Promise<any> {
+    const response = await api.delete<ApiResponse<any>>(`/bookings/${id}`, { 
+      data: { reason } 
+    });
+    return response.data.data!;
+  }
+
+  static async extendBooking(id: string, hours: number): Promise<any> {
+    const response = await api.patch<ApiResponse<any>>(`/bookings/${id}/extend`, { 
+      hours 
+    });
+    return response.data.data!;
+  }
+
+  static async getBookingStats(): Promise<any> {
+    const response = await api.get<ApiResponse<any>>('/bookings/stats/overview');
+    return response.data.data!;
+  }
+
+  // Уведомления
+  static async getNotifications(params?: { 
+    page?: number; 
+    limit?: number; 
+  }): Promise<{ notifications: any[]; pagination: any }> {
+    const response = await api.get<ApiResponse<any[]>>('/notifications', {
+      params,
+    });
+    return {
+      notifications: response.data.data!,
+      pagination: response.data.pagination!,
+    };
+  }
+
+  static async getUnreadNotificationsCount(): Promise<{ unreadCount: number }> {
+    const response = await api.get<ApiResponse<{ unreadCount: number }>>('/notifications/unread-count');
+    return response.data.data!;
+  }
+
+  static async markNotificationAsRead(id: string): Promise<any> {
+    const response = await api.patch<ApiResponse<any>>(`/notifications/${id}/read`);
+    return response.data.data!;
+  }
+
+  static async markAllNotificationsAsRead(): Promise<{ count: number }> {
+    const response = await api.patch<ApiResponse<{ count: number }>>('/notifications/mark-all-read');
+    return response.data.data!;
+  }
+}
