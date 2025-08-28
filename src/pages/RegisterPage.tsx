@@ -20,7 +20,7 @@ interface RegisterFormData {
   agreement: boolean;
 }
 
-const registerSchema: yup.ObjectSchema<RegisterFormData> = yup.object({
+const  registerSchema: yup.ObjectSchema<RegisterFormData> = yup.object({
   email: yup
     .string()
     .email('Неверный формат email')
